@@ -100,21 +100,21 @@ public class InventoryItem implements Comparable<InventoryItem> {
 			throw new IllegalArgumentException("InventoryItem: document was null");
 		}
 		Element result = document.createElement(Constants.INVENTORY);
-		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, getDescription(), document));
-		if (!getManufacturer().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.MANUFACTURER, getManufacturer(), document));
+		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, description(), document));
+		if (!manufacturer().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.MANUFACTURER, manufacturer(), document));
 		}
-		if (!getModel().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.MODEL, getModel(), document));
+		if (!model().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.MODEL, model(), document));
 		}
-		if (!getSerialNumber().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.SERIAL_NUMBER, getSerialNumber(), document));
+		if (!serialNumber().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.SERIAL_NUMBER, serialNumber(), document));
 		}
-		if (!getSupplier().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.SUPPLIER, getSupplier(), document));
+		if (!supplier().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.SUPPLIER, supplier(), document));
 		}
-		if (!getPurchaseDate().isEmpty()) {
-			LocalDate lDate = LocalDate.parse(getPurchaseDate(), dateFormatter);
+		if (!purchaseDate().isEmpty()) {
+			LocalDate lDate = LocalDate.parse(purchaseDate(), dateFormatter);
 			String dateForStorage = lDate.format(storageFormatter);
 			result.appendChild(ElementBuilder.build(Constants.PURCHASE_DATE, dateForStorage, document));
 		}
@@ -132,7 +132,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		this.owner.set(null);
 	}
 
-	public String getDescription() {
+	public String description() {
 		return description.get();
 	}
 
@@ -140,7 +140,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		return description;
 	}
 
-	public String getManufacturer() {
+	public String manufacturer() {
 		return manufacturer.get();
 	}
 
@@ -148,7 +148,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		return manufacturer;
 	}
 
-	public String getModel() {
+	public String model() {
 		return model.get();
 	}
 
@@ -156,7 +156,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		return model;
 	}
 
-	public String getSerialNumber() {
+	public String serialNumber() {
 		return serialNumber.get();
 	}
 
@@ -164,7 +164,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		return serialNumber;
 	}
 
-	public String getSupplier() {
+	public String supplier() {
 		return supplier.get();
 	}
 
@@ -172,7 +172,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		return supplier;
 	}
 
-	public String getPurchaseDate() {
+	public String purchaseDate() {
 		return purchaseDate.get();
 	}
 
@@ -180,7 +180,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		return purchaseDate;
 	}
 
-	public Property getOwner() {
+	public Property owner() {
 		return owner.get();
 	}
 
