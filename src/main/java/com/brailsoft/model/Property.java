@@ -54,7 +54,7 @@ public class Property implements Comparable<Property> {
 			throw new IllegalArgumentException("Property: document was null");
 		}
 		Element result = document.createElement(Constants.PROPERTY);
-		result.appendChild(getAddress().buildElement(document));
+		result.appendChild(address().buildElement(document));
 		return result;
 	}
 
@@ -169,17 +169,17 @@ public class Property implements Comparable<Property> {
 		}
 	}
 
-	public List<MonitoredItem> getItems() {
+	public List<MonitoredItem> monitoredItems() {
 		List<MonitoredItem> copyList = items.stream().map(item -> new MonitoredItem(item)).sorted()
 				.collect(Collectors.toList());
 		return copyList;
 	}
 
-	public Address getAddress() {
+	public Address address() {
 		return new Address(address.get());
 	}
 
-	public List<InventoryItem> getInventory() {
+	public List<InventoryItem> inventoryItems() {
 		List<InventoryItem> copyList = inventory.stream().map(item -> new InventoryItem(item)).sorted()
 				.collect(Collectors.toList());
 		return copyList;
@@ -190,7 +190,7 @@ public class Property implements Comparable<Property> {
 		return list.size() > 0;
 	}
 
-	public List<MonitoredItem> getOverdueItems() {
+	public List<MonitoredItem> overdueItems() {
 		List<MonitoredItem> copyList = new ArrayList<>();
 		items.stream().forEach(item -> {
 			if (item.overdue()) {
@@ -207,7 +207,7 @@ public class Property implements Comparable<Property> {
 		return list.size() > 0;
 	}
 
-	public List<MonitoredItem> getOverdueNotices() {
+	public List<MonitoredItem> overdueNotices() {
 		List<MonitoredItem> copyList = new ArrayList<>();
 		items.stream().forEach(item -> {
 			if (item.noticeDue() && !item.overdue()) {

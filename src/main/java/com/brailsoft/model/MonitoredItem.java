@@ -183,18 +183,17 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 			throw new IllegalArgumentException("MonitoredItem: document was null");
 		}
 		Element result = document.createElement(Constants.ITEM);
-		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, getDescription(), document));
+		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, description(), document));
 		result.appendChild(
-				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_ACTION, getPeriodForNextAction().toString(), document));
-		result.appendChild(ElementBuilder.build(Constants.NOTICE_EVERY, Integer.toString(getNoticeEvery()), document));
+				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_ACTION, periodForNextAction().toString(), document));
+		result.appendChild(ElementBuilder.build(Constants.NOTICE_EVERY, Integer.toString(noticeEvery()), document));
 		result.appendChild(
 				ElementBuilder.build(Constants.LAST_ACTIONED, getLastActionPerformed().toString(), document));
+		result.appendChild(ElementBuilder.build(Constants.ADVANCE_NOTICE, Integer.toString(advanceNotice()), document));
 		result.appendChild(
-				ElementBuilder.build(Constants.ADVANCE_NOTICE, Integer.toString(getAdvanceNotice()), document));
-		result.appendChild(
-				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_NOTICE, getPeriodForNextNotice().toString(), document));
-		if (getEmailSentOn() != null) {
-			result.appendChild(ElementBuilder.build(Constants.EMAIL_SENT_ON, getEmailSentOn().toString(), document));
+				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_NOTICE, periodForNextNotice().toString(), document));
+		if (emailSentOn() != null) {
+			result.appendChild(ElementBuilder.build(Constants.EMAIL_SENT_ON, emailSentOn().toString(), document));
 		}
 		return result;
 
@@ -223,7 +222,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		this.emailSent.bind(emailSentOnBinding);
 	}
 
-	public Property getOwner() {
+	public Property owner() {
 		return new Property(owner.get());
 	}
 
@@ -235,7 +234,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return owner;
 	}
 
-	public String getDescription() {
+	public String description() {
 		return description.get();
 	}
 
@@ -247,7 +246,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return description;
 	}
 
-	public Period getPeriodForNextAction() {
+	public Period periodForNextAction() {
 		return periodForNextAction.get();
 	}
 
@@ -260,7 +259,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return periodForNextAction;
 	}
 
-	public int getNoticeEvery() {
+	public int noticeEvery() {
 		return noticeEvery.get();
 	}
 
@@ -273,7 +272,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return noticeEvery;
 	}
 
-	public int getAdvanceNotice() {
+	public int advanceNotice() {
 		return advanceNotice.get();
 	}
 
@@ -290,7 +289,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return lastActionPerformed.get();
 	}
 
-	public LocalDate getTimeForNextAction() {
+	public LocalDate timeForNextAction() {
 		return timeForNextAction.get();
 	}
 
@@ -298,7 +297,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return timeForNextNotice.get();
 	}
 
-	public Period getPeriodForNextNotice() {
+	public Period periodForNextNotice() {
 		return periodForNextNotice.get();
 	}
 
@@ -324,7 +323,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		this.emailSentOn.set(when);
 	}
 
-	public LocalDate getEmailSentOn() {
+	public LocalDate emailSentOn() {
 		return emailSentOn.get();
 	}
 
@@ -412,7 +411,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 
 	@Override
 	public int compareTo(MonitoredItem that) {
-		return this.getTimeForNextAction().compareTo(that.getTimeForNextAction());
+		return this.timeForNextAction().compareTo(that.timeForNextAction());
 	}
 
 	@Override

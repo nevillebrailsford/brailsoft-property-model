@@ -94,15 +94,15 @@ public class Address implements Comparable<Address> {
 			throw new IllegalArgumentException("Address: document was null");
 		}
 		Element result = document.createElement(Constants.ADDRESS);
-		result.appendChild(getPostCode().buildElement(document));
-		for (int index = 0; index < getLinesOfAddress().length; index++) {
-			result.appendChild(ElementBuilder.build(Constants.LINE, getLinesOfAddress()[index], document));
+		result.appendChild(postCode().buildElement(document));
+		for (int index = 0; index < linesOfAddress().length; index++) {
+			result.appendChild(ElementBuilder.build(Constants.LINE, linesOfAddress()[index], document));
 		}
 		return result;
 
 	}
 
-	public String[] getLinesOfAddress() {
+	public String[] linesOfAddress() {
 		String[] lines = new String[3];
 		lines[0] = street.get();
 		lines[1] = town.get();
@@ -110,7 +110,7 @@ public class Address implements Comparable<Address> {
 		return lines;
 	}
 
-	public PostCode getPostCode() {
+	public PostCode postCode() {
 		return new PostCode(postcode.get());
 	}
 
