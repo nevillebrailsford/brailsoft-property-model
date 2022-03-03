@@ -293,7 +293,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return timeForNextAction.get();
 	}
 
-	public LocalDate getTimeForNextNotice() {
+	public LocalDate timeForNextNotice() {
 		return timeForNextNotice.get();
 	}
 
