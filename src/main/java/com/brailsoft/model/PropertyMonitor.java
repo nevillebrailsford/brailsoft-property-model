@@ -48,12 +48,16 @@ public class PropertyMonitor {
 	public synchronized void addProperty(Property newProperty) {
 		LOGGER.entering(CLASS_NAME, "addProperty", newProperty);
 		if (newProperty == null) {
+			Notification notification = new Notification(PropertyNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
 			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
 			LOGGER.throwing(CLASS_NAME, "addProperty", exc);
 			LOGGER.exiting(CLASS_NAME, "addProperty");
 			throw exc;
 		}
 		if (properties.contains(newProperty)) {
+			Notification notification = new Notification(PropertyNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
 			IllegalArgumentException exc = new IllegalArgumentException(
 					"PropertyMonitor: property " + newProperty + " already exists");
 			LOGGER.throwing(CLASS_NAME, "addProperty", exc);
@@ -62,65 +66,34 @@ public class PropertyMonitor {
 		}
 		try {
 			properties.add(newProperty);
-			Notification<Property> notification = new Notification<>(PropertyNotificationType.Add, this, newProperty);
-			NotificationCentre.broadcast(notification);
 			AuditService.writeAuditInformation(PropertyType.Added, PropertyObject.Property, newProperty.toString());
 			updateStorage();
-
-		} finally {
-			LOGGER.exiting(CLASS_NAME, "addProperty");
-		}
-	}
-
-	public synchronized void replaceProperty(Property oldProperty, Property newProperty) {
-		LOGGER.entering(CLASS_NAME, "replaceProperty", new Object[] { oldProperty, newProperty });
-		if (oldProperty == null || newProperty == null) {
-			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
-			LOGGER.throwing(CLASS_NAME, "replaceProperty", exc);
-			LOGGER.exiting(CLASS_NAME, "replaceProperty");
-			throw exc;
-		}
-		if (!properties.contains(oldProperty)) {
-			IllegalArgumentException exc = new IllegalArgumentException(
-					"PropertyMonitor: property " + oldProperty + " was not known");
-			LOGGER.throwing(CLASS_NAME, "replaceProperty", exc);
-			LOGGER.exiting(CLASS_NAME, "replaceProperty");
-			throw exc;
-		}
-		if (properties.contains(newProperty)) {
-			IllegalArgumentException exc = new IllegalArgumentException(
-					"PropertyMonitor: property " + newProperty + " already exists");
-			LOGGER.throwing(CLASS_NAME, "replaceProperty", exc);
-			LOGGER.exiting(CLASS_NAME, "replaceProperty");
-			throw exc;
-		}
-		try {
-			properties.remove(oldProperty);
-			properties.add(newProperty);
-			Notification<PropertyReplacement> notification = new Notification<>(PropertyNotificationType.Changed, this,
-					new PropertyReplacement(oldProperty, newProperty));
+			Notification notification = new Notification(PropertyNotificationType.Add, this, newProperty);
 			NotificationCentre.broadcast(notification);
-			AuditService.writeAuditInformation(PropertyType.Changed, PropertyObject.Property, newProperty.toString());
-			updateStorage();
-
 		} catch (Exception e) {
+			Notification notification = new Notification(PropertyNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
 			LOGGER.warning("Caught exception: " + e.getMessage());
-			LOGGER.throwing(CLASS_NAME, "replaceProperty", e);
+			LOGGER.throwing(CLASS_NAME, "removeProperty", e);
 			throw e;
 		} finally {
-			LOGGER.exiting(CLASS_NAME, "replaceProperty");
+			LOGGER.exiting(CLASS_NAME, "addProperty");
 		}
 	}
 
 	public synchronized void removeProperty(Property oldProperty) {
 		LOGGER.entering(CLASS_NAME, "removeProperty", oldProperty);
 		if (oldProperty == null) {
+			Notification notification = new Notification(PropertyNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
 			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
 			LOGGER.throwing(CLASS_NAME, "removeProperty", exc);
 			LOGGER.exiting(CLASS_NAME, "removeProperty");
 			throw exc;
 		}
 		if (!properties.contains(oldProperty)) {
+			Notification notification = new Notification(PropertyNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
 			IllegalArgumentException exc = new IllegalArgumentException(
 					"PropertyMonitor: property " + oldProperty + " was not known");
 			LOGGER.throwing(CLASS_NAME, "removeProperty", exc);
@@ -129,17 +102,273 @@ public class PropertyMonitor {
 		}
 		try {
 			properties.remove(oldProperty);
-			Notification<Property> notification = new Notification<>(PropertyNotificationType.Removed, this,
-					oldProperty);
-			NotificationCentre.broadcast(notification);
-			AuditService.writeAuditInformation(PropertyType.Deleted, PropertyObject.Property, oldProperty.toString());
+			AuditService.writeAuditInformation(PropertyType.Removed, PropertyObject.Property, oldProperty.toString());
 			updateStorage();
+			Notification notification = new Notification(PropertyNotificationType.Removed, this, oldProperty);
+			NotificationCentre.broadcast(notification);
 		} catch (Exception e) {
+			Notification notification = new Notification(PropertyNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
 			LOGGER.warning("Caught exception: " + e.getMessage());
 			LOGGER.throwing(CLASS_NAME, "removeProperty", e);
 			throw e;
 		} finally {
 			LOGGER.exiting(CLASS_NAME, "removeProperty");
+		}
+	}
+
+	public synchronized void addItem(MonitoredItem monitoredItem) {
+		LOGGER.entering(CLASS_NAME, "addItem", monitoredItem);
+		if (monitoredItem == null) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		Property property = null;
+		try {
+			property = monitoredItem.owner();
+		} catch (IllegalArgumentException e) {
+			LOGGER.fine("PropertyMonitor: caught exception: " + e.getMessage());
+		}
+		if (property == null) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		if (!properties.contains(property)) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		try {
+			findProperty(property).addItem(monitoredItem);
+			AuditService.writeAuditInformation(PropertyType.Added, PropertyObject.MonitoredItem,
+					monitoredItem.toString());
+			updateStorage();
+			Notification notification = new Notification(MonitoredItemNotificationType.Add, this, monitoredItem);
+			NotificationCentre.broadcast(notification);
+		} catch (Exception e) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "addItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "addItem");
+		}
+	}
+
+	public synchronized void replaceItem(MonitoredItem monitoredItem) {
+		LOGGER.entering(CLASS_NAME, "replaceItem", monitoredItem);
+		if (monitoredItem == null) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			LOGGER.throwing(CLASS_NAME, "replaceItem", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+			throw exc;
+		}
+		Property property = null;
+		try {
+			property = monitoredItem.owner();
+		} catch (IllegalArgumentException e) {
+			LOGGER.fine("PropertyMonitor: caught exception: " + e.getMessage());
+		}
+		if (property == null) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "replaceItem", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+			throw exc;
+		}
+		if (!properties.contains(property)) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "replaceItem", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+			throw exc;
+		}
+		try {
+			findProperty(property).replaceItem(monitoredItem);
+			AuditService.writeAuditInformation(PropertyType.Changed, PropertyObject.MonitoredItem,
+					monitoredItem.toString());
+			updateStorage();
+			Notification notification = new Notification(MonitoredItemNotificationType.Changed, this, monitoredItem);
+			NotificationCentre.broadcast(notification);
+		} catch (Exception e) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "replaceItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+		}
+	}
+
+	public synchronized void removeItem(MonitoredItem monitoredItem) {
+		LOGGER.entering(CLASS_NAME, "removeItem", monitoredItem);
+		if (monitoredItem == null) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		Property property = null;
+		try {
+			property = monitoredItem.owner();
+		} catch (IllegalArgumentException e) {
+			LOGGER.fine("PropertyMonitor: caught exception: " + e.getMessage());
+		}
+		if (property == null) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		if (!properties.contains(property)) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		try {
+			findProperty(property).removeItem(monitoredItem);
+			AuditService.writeAuditInformation(PropertyType.Removed, PropertyObject.MonitoredItem,
+					monitoredItem.toString());
+			updateStorage();
+			Notification notification = new Notification(MonitoredItemNotificationType.Removed, this, monitoredItem);
+			NotificationCentre.broadcast(notification);
+		} catch (Exception e) {
+			Notification notification = new Notification(MonitoredItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "removeItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+		}
+	}
+
+	public synchronized void addItem(InventoryItem inventoryItem) {
+		LOGGER.entering(CLASS_NAME, "addItem", inventoryItem);
+		if (inventoryItem == null) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: inventoryItem was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		Property property = null;
+		try {
+			property = inventoryItem.owner();
+		} catch (IllegalArgumentException e) {
+			LOGGER.fine("PropertyMonitor: caught exception: " + e.getMessage());
+		}
+		if (property == null) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		if (!properties.contains(property)) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		try {
+			findProperty(property).addItem(inventoryItem);
+			AuditService.writeAuditInformation(PropertyType.Added, PropertyObject.InventoryItem,
+					inventoryItem.toString());
+			updateStorage();
+			Notification notification = new Notification(InventoryItemNotificationType.Add, this, inventoryItem);
+			NotificationCentre.broadcast(notification);
+		} catch (Exception e) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "addItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "addItem");
+		}
+	}
+
+	public synchronized void removeItem(InventoryItem inventoryItem) {
+		LOGGER.entering(CLASS_NAME, "removeItem", inventoryItem);
+		if (inventoryItem == null) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: inventoryItem was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		Property property = null;
+		try {
+			property = inventoryItem.owner();
+		} catch (IllegalArgumentException e) {
+			LOGGER.fine("PropertyMonitor: caught exception: " + e.getMessage());
+		}
+		if (property == null) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		if (!properties.contains(property)) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		try {
+			findProperty(property).removeItem(inventoryItem);
+			AuditService.writeAuditInformation(PropertyType.Removed, PropertyObject.InventoryItem,
+					inventoryItem.toString());
+			updateStorage();
+			Notification notification = new Notification(InventoryItemNotificationType.Removed, this, inventoryItem);
+			NotificationCentre.broadcast(notification);
+		} catch (Exception e) {
+			Notification notification = new Notification(InventoryItemNotificationType.Failed, this);
+			NotificationCentre.broadcast(notification);
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "removeItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "removeItem");
 		}
 	}
 
@@ -150,84 +379,6 @@ public class PropertyMonitor {
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "properties", copyList);
 		return copyList;
-	}
-
-	public synchronized void addItem(MonitoredItem monitoredItem) {
-		LOGGER.entering(CLASS_NAME, "addItem", monitoredItem);
-		if (monitoredItem == null) {
-			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
-			LOGGER.throwing(CLASS_NAME, "addItem", exc);
-			LOGGER.exiting(CLASS_NAME, "addItem");
-			throw exc;
-		}
-		Property property = monitoredItem.owner();
-		if (property == null) {
-			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
-			LOGGER.throwing(CLASS_NAME, "addItem", exc);
-			LOGGER.exiting(CLASS_NAME, "addItem");
-			throw exc;
-		}
-		if (!properties.contains(property)) {
-			IllegalArgumentException exc = new IllegalArgumentException(
-					"PropertyMonitor: property " + property + " was not known");
-			LOGGER.throwing(CLASS_NAME, "addItem", exc);
-			LOGGER.exiting(CLASS_NAME, "addItem");
-			throw exc;
-		}
-		try {
-			findProperty(property).addItem(monitoredItem);
-			Notification<MonitoredItem> notification = new Notification<>(MonitoredItemNotificationType.Add, this,
-					monitoredItem);
-			NotificationCentre.broadcast(notification);
-			AuditService.writeAuditInformation(PropertyType.Added, PropertyObject.MonitoredItem,
-					monitoredItem.toString());
-			updateStorage();
-		} catch (Exception e) {
-			LOGGER.warning("Caught exception: " + e.getMessage());
-			LOGGER.throwing(CLASS_NAME, "addItem", e);
-			throw e;
-		} finally {
-			LOGGER.exiting(CLASS_NAME, "addItem");
-		}
-	}
-
-	public synchronized void addItem(InventoryItem inventoryItem) {
-		LOGGER.entering(CLASS_NAME, "addItem", inventoryItem);
-		if (inventoryItem == null) {
-			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: inventoryItem was null");
-			LOGGER.throwing(CLASS_NAME, "addItem", exc);
-			LOGGER.exiting(CLASS_NAME, "addItem");
-			throw exc;
-		}
-		Property property = inventoryItem.owner();
-		if (property == null) {
-			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
-			LOGGER.throwing(CLASS_NAME, "addItem", exc);
-			LOGGER.exiting(CLASS_NAME, "addItem");
-			throw exc;
-		}
-		if (!properties.contains(property)) {
-			IllegalArgumentException exc = new IllegalArgumentException(
-					"PropertyMonitor: property " + property + " was not known");
-			LOGGER.throwing(CLASS_NAME, "addItem", exc);
-			LOGGER.exiting(CLASS_NAME, "addItem");
-			throw exc;
-		}
-		try {
-			findProperty(property).addItem(inventoryItem);
-			Notification<InventoryItem> notification = new Notification<>(InventoryItemNotificationType.Add, this,
-					inventoryItem);
-			NotificationCentre.broadcast(notification);
-			AuditService.writeAuditInformation(PropertyType.Added, PropertyObject.InventoryItem,
-					inventoryItem.toString());
-			updateStorage();
-		} catch (Exception e) {
-			LOGGER.warning("Caught exception: " + e.getMessage());
-			LOGGER.throwing(CLASS_NAME, "addItem", e);
-			throw e;
-		} finally {
-			LOGGER.exiting(CLASS_NAME, "addItem");
-		}
 	}
 
 	private void updateStorage() {
@@ -261,7 +412,7 @@ public class PropertyMonitor {
 		return modelDirectory;
 	}
 
-	private synchronized Property findProperty(Property property) {
+	synchronized Property findProperty(Property property) {
 		LOGGER.entering(CLASS_NAME, "findProperty", property);
 		Property found = null;
 		for (Property p : properties) {
@@ -272,6 +423,15 @@ public class PropertyMonitor {
 		}
 		LOGGER.exiting(CLASS_NAME, "findProperty", found);
 		return found;
+	}
+
+	synchronized List<MonitoredItem> getAllItems() {
+		LOGGER.entering(CLASS_NAME, "getAllItems");
+		List<MonitoredItem> allItems = properties().stream().flatMap(property -> property.monitoredItems().stream())
+				.collect(Collectors.toList());
+		Collections.sort(allItems);
+		LOGGER.exiting(CLASS_NAME, "getAllItems", allItems);
+		return allItems;
 	}
 
 }

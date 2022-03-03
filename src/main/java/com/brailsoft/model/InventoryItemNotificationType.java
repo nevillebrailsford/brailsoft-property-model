@@ -3,7 +3,7 @@ package com.brailsoft.model;
 import com.brailsoft.base.NotificationType;
 
 public enum InventoryItemNotificationType implements NotificationType {
-	Add("add"), Changed("changed"), Removed("removed");
+	Add("add"), Changed("changed"), Removed("removed"), Failed("failed");
 
 	private String type;
 

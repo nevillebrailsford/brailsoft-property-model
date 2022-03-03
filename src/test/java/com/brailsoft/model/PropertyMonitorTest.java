@@ -35,21 +35,22 @@ class PropertyMonitorTest {
 	private static final String[] linesOfAddress = new String[] { LINE1, LINE2, LINE3 };
 	private static final Address address1 = new Address(postCode1, linesOfAddress);
 	private static final Property property1 = new Property(address1);
-	private static final Address address2 = new Address(postCode2, linesOfAddress);
-	private static final Property property2 = new Property(address2);
 
 	private Object waitForIO = new Object();
 	private boolean addedProperty = false;
 	private boolean removedProperty = false;
-	private boolean changedProperty = false;
+	private boolean failedIO = false;
 
 	NotificationListener listener = new NotificationListener() {
 		@Override
 		public void notify(Notification notification) {
-			assertTrue(notification.subject().isPresent());
 			if (notification.notificationType() instanceof StorageNotificationType) {
+				assertTrue(notification.subject().isPresent());
 				handleStorage(notification);
 			} else if (notification.notificationType() instanceof PropertyNotificationType) {
+				if (notification.notificationType() != PropertyNotificationType.Failed) {
+					assertTrue(notification.subject().isPresent());
+				}
 				handleProperty(notification);
 			}
 		}
@@ -131,39 +132,6 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testReplaceProperty() throws InterruptedException {
-		assertEquals(0, PropertyMonitor.instance().properties().size());
-		synchronized (waitForIO) {
-			PropertyMonitor.instance().addProperty(property1);
-			waitForIO.wait();
-			assertEquals(1, PropertyMonitor.instance().properties().size());
-		}
-		synchronized (waitForIO) {
-			PropertyMonitor.instance().replaceProperty(property1, property2);
-			waitForIO.wait();
-			assertEquals(1, PropertyMonitor.instance().properties().size());
-		}
-	}
-
-	@Test
-	void testReplacePropertyWithListener() throws InterruptedException {
-		assertFalse(changedProperty);
-		assertEquals(0, PropertyMonitor.instance().properties().size());
-		synchronized (waitForIO) {
-			PropertyMonitor.instance().addProperty(property1);
-			waitForIO.wait();
-			assertEquals(1, PropertyMonitor.instance().properties().size());
-		}
-		synchronized (waitForIO) {
-			PropertyMonitor.instance().replaceProperty(property1, property2);
-			waitForIO.wait();
-			assertEquals(1, PropertyMonitor.instance().properties().size());
-			assertTrue(changedProperty);
-		}
-		assertEquals(1, PropertyMonitor.instance().properties().size());
-	}
-
-	@Test
 	void testRemoveProperty() throws InterruptedException {
 		synchronized (waitForIO) {
 			PropertyMonitor.instance().addProperty(property1);
@@ -192,44 +160,66 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testAddNullProperty() {
-		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
-			PropertyMonitor.instance().addProperty(null);
-		});
-		assertEquals("PropertyMonitor: property was null", exc.getMessage());
+	void testAddNullProperty() throws InterruptedException {
+		synchronized (waitForIO) {
+			Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+				PropertyMonitor.instance().addProperty(null);
+			});
+			assertEquals("PropertyMonitor: property was null", exc.getMessage());
+			waitForIO.wait();
+		}
+		assertTrue(failedIO);
 	}
 
 	@Test
-	void testRemoveNullProperty() {
-		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
-			PropertyMonitor.instance().removeProperty(null);
-		});
-		assertEquals("PropertyMonitor: property was null", exc.getMessage());
+	void testRemoveNullProperty() throws InterruptedException {
+		System.out.println("1");
+		synchronized (waitForIO) {
+			System.out.println("2");
+			Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+				PropertyMonitor.instance().removeProperty(null);
+			});
+			assertEquals("PropertyMonitor: property was null", exc.getMessage());
+			waitForIO.wait();
+		}
+		assertTrue(failedIO);
 	}
 
 	@Test
 	void testAddDuplicateProperty() throws InterruptedException {
-		PropertyMonitor.instance().addProperty(property1);
-		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+		synchronized (waitForIO) {
 			PropertyMonitor.instance().addProperty(property1);
-		});
-		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST already exists",
-				exc.getMessage());
+			waitForIO.wait();
+		}
+		assertFalse(failedIO);
+		synchronized (waitForIO) {
+			Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+				PropertyMonitor.instance().addProperty(property1);
+			});
+			assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST already exists",
+					exc.getMessage());
+			waitForIO.wait();
+		}
+		assertTrue(failedIO);
 	}
 
 	@Test
 	void testRemoveUnknownProperty() throws InterruptedException {
-		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
-			PropertyMonitor.instance().removeProperty(property1);
-		});
-		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST was not known",
-				exc.getMessage());
+		synchronized (waitForIO) {
+			Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+				PropertyMonitor.instance().removeProperty(property1);
+			});
+			assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST was not known",
+					exc.getMessage());
+			waitForIO.wait();
+		}
+		assertTrue(failedIO);
 	}
 
 	private void resetFlags() {
 		addedProperty = false;
 		removedProperty = false;
-		changedProperty = false;
+		failedIO = false;
 	}
 
 	private void handleProperty(Notification notification) {
@@ -243,6 +233,9 @@ class PropertyMonitorTest {
 			}
 			case Removed -> {
 				removeProperty();
+			}
+			case Failed -> {
+				failed();
 			}
 		}
 	}
@@ -271,6 +264,13 @@ class PropertyMonitorTest {
 		}
 	}
 
+	private void failed() {
+		synchronized (waitForIO) {
+			failedIO = true;
+			waitForIO.notifyAll();
+		}
+	}
+
 	private void addProperty() {
 		addedProperty = true;
 	}
@@ -280,7 +280,6 @@ class PropertyMonitorTest {
 	}
 
 	private void changeProperty() {
-		changedProperty = true;
 	}
 
 }
