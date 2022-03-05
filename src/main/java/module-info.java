@@ -4,8 +4,8 @@ module brailsoft.model {
 	requires brailsoft.base;
 	requires brailsoft.storage;
 	requires java.logging;
-	requires java.xml;
-	requires javafx.base;
+	requires transitive java.xml;
+	requires transitive javafx.base;
 
 	opens com.brailsoft.model;
 }
