@@ -395,7 +395,7 @@ public class PropertyMonitor {
 	private File obtainModelDirectory() {
 		LOGGER.entering(CLASS_NAME, "obtainModelDirectory");
 		File rootDirectory = ApplicationConfiguration.rootDirectory();
-		File applicationDirectory = new File(rootDirectory, ApplicationConfiguration.application().applicationName());
+		File applicationDirectory = new File(rootDirectory, ApplicationConfiguration.applicationDecsriptor().applicationName());
 		File modelDirectory = new File(applicationDirectory, MODEL);
 		if (!modelDirectory.exists()) {
 			LOGGER.fine("Model directory " + modelDirectory.getAbsolutePath() + " does not exist");

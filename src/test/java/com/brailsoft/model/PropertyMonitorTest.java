@@ -16,8 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.brailsoft.base.Application;
 import com.brailsoft.base.ApplicationConfiguration;
+import com.brailsoft.base.ApplicationDecsriptor;
 import com.brailsoft.base.LogConfigurer;
 import com.brailsoft.base.Notification;
 import com.brailsoft.base.NotificationCentre;
@@ -28,7 +28,6 @@ import com.brailsoft.storage.StoreState;
 class PropertyMonitorTest {
 
 	private static final PostCode postCode1 = new PostCode("CW3 9ST");
-	private static final PostCode postCode2 = new PostCode("CW3 9SU");
 	private static final String LINE1 = "99 The Street";
 	private static final String LINE2 = "The Town";
 	private static final String LINE3 = "The County";
@@ -70,7 +69,7 @@ class PropertyMonitorTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		resetFlags();
-		Application app = new Application("test") {
+		ApplicationDecsriptor app = new ApplicationDecsriptor("test") {
 			@Override
 			public Level level() {
 				return Level.OFF;

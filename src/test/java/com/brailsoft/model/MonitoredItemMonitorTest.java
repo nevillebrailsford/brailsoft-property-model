@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.brailsoft.base.Application;
+import com.brailsoft.base.ApplicationDecsriptor;
 import com.brailsoft.base.ApplicationConfiguration;
 import com.brailsoft.base.LogConfigurer;
 import com.brailsoft.base.Notification;
@@ -77,7 +77,7 @@ class MonitoredItemMonitorTest {
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		testItem.setOwner(property1);
 		resetFlags();
-		Application app = new Application("test") {
+		ApplicationDecsriptor app = new ApplicationDecsriptor("test") {
 			@Override
 			public Level level() {
 				return Level.OFF;

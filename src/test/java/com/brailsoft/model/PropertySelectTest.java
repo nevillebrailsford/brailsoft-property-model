@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.brailsoft.base.Application;
+import com.brailsoft.base.ApplicationDecsriptor;
 import com.brailsoft.base.ApplicationConfiguration;
 import com.brailsoft.base.LogConfigurer;
 import com.brailsoft.base.Notification;
@@ -69,7 +69,7 @@ class PropertySelectTest {
 		testInventory = new InventoryItem("inventory1", "manufacturer1", "model1", "serialnumber1", "supplier1",
 				LocalDate.now());
 		testInventory.setOwner(property1);
-		Application app = new Application("test") {
+		ApplicationDecsriptor app = new ApplicationDecsriptor("test") {
 			@Override
 			public Level level() {
 				return Level.OFF;
