@@ -14,4 +14,9 @@ public enum PropertyNotificationType implements NotificationType {
 	public String type() {
 		return type;
 	}
+
+	@Override
+	public String category() {
+		return "property";
+	}
 }

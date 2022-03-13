@@ -15,4 +15,8 @@ public enum InventoryItemNotificationType implements NotificationType {
 		return type;
 	}
 
+	@Override
+	public String category() {
+		return "inventoryitem";
+	}
 }

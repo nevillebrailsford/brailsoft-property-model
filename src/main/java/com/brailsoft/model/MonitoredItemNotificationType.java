@@ -15,4 +15,8 @@ public enum MonitoredItemNotificationType implements NotificationType {
 		return type;
 	}
 
+	@Override
+	public String category() {
+		return "monitoreditem";
+	}
 }
