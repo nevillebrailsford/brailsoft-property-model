@@ -387,7 +387,7 @@ public class PropertyMonitor {
 		List<MonitoredItem> copyList = p.monitoredItems().stream().map(item -> new MonitoredItem(item))
 				.collect(Collectors.toList());
 		Collections.sort(copyList);
-		LOGGER.entering(CLASS_NAME, "monitoredItemsFor", copyList);
+		LOGGER.exiting(CLASS_NAME, "monitoredItemsFor", copyList);
 		return copyList;
 	}
 
@@ -397,7 +397,7 @@ public class PropertyMonitor {
 		List<InventoryItem> copyList = p.inventoryItems().stream().map(item -> new InventoryItem(item))
 				.collect(Collectors.toList());
 		Collections.sort(copyList);
-		LOGGER.entering(CLASS_NAME, "inventoryItemsFor", copyList);
+		LOGGER.exiting(CLASS_NAME, "inventoryItemsFor", copyList);
 		return copyList;
 	}
 
