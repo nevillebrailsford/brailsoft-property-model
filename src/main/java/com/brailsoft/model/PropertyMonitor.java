@@ -381,6 +381,26 @@ public class PropertyMonitor {
 		return copyList;
 	}
 
+	public synchronized List<MonitoredItem> monitoredItemsFor(Property property) {
+		LOGGER.entering(CLASS_NAME, "monitoredItemsFor", property);
+		Property p = findProperty(property);
+		List<MonitoredItem> copyList = p.monitoredItems().stream().map(item -> new MonitoredItem(item))
+				.collect(Collectors.toList());
+		Collections.sort(copyList);
+		LOGGER.entering(CLASS_NAME, "monitoredItemsFor", copyList);
+		return copyList;
+	}
+
+	public synchronized List<InventoryItem> inventoryItemsFor(Property property) {
+		LOGGER.entering(CLASS_NAME, "inventoryItemsFor", property);
+		Property p = findProperty(property);
+		List<InventoryItem> copyList = p.inventoryItems().stream().map(item -> new InventoryItem(item))
+				.collect(Collectors.toList());
+		Collections.sort(copyList);
+		LOGGER.entering(CLASS_NAME, "inventoryItemsFor", copyList);
+		return copyList;
+	}
+
 	private void updateStorage() {
 		LOGGER.entering(CLASS_NAME, "updateStorage");
 		PropertyStore propertyStore = new PropertyStore();
@@ -395,7 +415,8 @@ public class PropertyMonitor {
 	private File obtainModelDirectory() {
 		LOGGER.entering(CLASS_NAME, "obtainModelDirectory");
 		File rootDirectory = ApplicationConfiguration.rootDirectory();
-		File applicationDirectory = new File(rootDirectory, ApplicationConfiguration.applicationDecsriptor().applicationName());
+		File applicationDirectory = new File(rootDirectory,
+				ApplicationConfiguration.applicationDecsriptor().applicationName());
 		File modelDirectory = new File(applicationDirectory, MODEL);
 		if (!modelDirectory.exists()) {
 			LOGGER.fine("Model directory " + modelDirectory.getAbsolutePath() + " does not exist");
@@ -433,5 +454,4 @@ public class PropertyMonitor {
 		LOGGER.exiting(CLASS_NAME, "getAllItems", allItems);
 		return allItems;
 	}
-
 }
