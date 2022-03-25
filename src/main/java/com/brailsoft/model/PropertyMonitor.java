@@ -16,8 +16,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class PropertyMonitor {
-	private static final String PROPERTY_FILE = "property.dat";
-	private static final String MODEL = "model";
 	private static final String CLASS_NAME = PropertyMonitor.class.getName();
 	private static final Logger LOGGER = ApplicationConfiguration.logger();
 
@@ -405,7 +403,7 @@ public class PropertyMonitor {
 		LOGGER.entering(CLASS_NAME, "updateStorage");
 		PropertyStore propertyStore = new PropertyStore();
 		File modelDirectory = obtainModelDirectory();
-		File dataFile = new File(modelDirectory, PROPERTY_FILE);
+		File dataFile = new File(modelDirectory, ModelConstants.PROPERTY_FILE);
 		propertyStore.setFileName(dataFile.getAbsolutePath());
 		Storage storage = new Storage();
 		storage.storeData(propertyStore);
@@ -417,7 +415,7 @@ public class PropertyMonitor {
 		File rootDirectory = ApplicationConfiguration.rootDirectory();
 		File applicationDirectory = new File(rootDirectory,
 				ApplicationConfiguration.applicationDecsriptor().applicationName());
-		File modelDirectory = new File(applicationDirectory, MODEL);
+		File modelDirectory = new File(applicationDirectory, ModelConstants.MODEL);
 		if (!modelDirectory.exists()) {
 			LOGGER.fine("Model directory " + modelDirectory.getAbsolutePath() + " does not exist");
 			if (!modelDirectory.mkdirs()) {

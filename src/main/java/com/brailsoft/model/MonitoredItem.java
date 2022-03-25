@@ -19,7 +19,7 @@ import javafx.beans.property.StringProperty;
 
 public class MonitoredItem implements Comparable<MonitoredItem> {
 
-	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(ModelDateFormats.dateFormatForUI);
+	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(ModelConstants.dateFormatForUI);
 
 	private StringProperty description = new SimpleStringProperty(this, "description", "");
 	private ObjectProperty<LocalDate> lastActionPerformed = new SimpleObjectProperty<>(this, "lastActionPerformed",

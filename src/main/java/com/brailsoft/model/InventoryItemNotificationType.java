@@ -17,6 +17,6 @@ public enum InventoryItemNotificationType implements NotificationType {
 
 	@Override
 	public String category() {
-		return "inventoryitem";
+		return ModelConstants.INVENTORY_ITEM_CATEGORY;
 	}
 }

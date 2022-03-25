@@ -14,8 +14,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class InventoryItem implements Comparable<InventoryItem> {
-	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(ModelDateFormats.dateFormatForUI);
-	private DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern(ModelDateFormats.dateFormatForStorage);
+	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(ModelConstants.dateFormatForUI);
+	private DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern(ModelConstants.dateFormatForStorage);
 
 	private StringProperty description = new SimpleStringProperty(this, "description", "");
 	private StringProperty manufacturer = new SimpleStringProperty(this, "manufacturuer", "");

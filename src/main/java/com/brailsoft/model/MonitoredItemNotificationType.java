@@ -17,6 +17,6 @@ public enum MonitoredItemNotificationType implements NotificationType {
 
 	@Override
 	public String category() {
-		return "monitoreditem";
+		return ModelConstants.MONITORED_ITEM_CATEGORY;
 	}
 }

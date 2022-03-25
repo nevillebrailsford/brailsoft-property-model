@@ -17,6 +17,6 @@ public enum PropertyNotificationType implements NotificationType {
 
 	@Override
 	public String category() {
-		return "property";
+		return ModelConstants.PROPERTY_CATEGORY;
 	}
 }
