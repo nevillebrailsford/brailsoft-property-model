@@ -379,6 +379,24 @@ public class PropertyMonitor {
 		return copyList;
 	}
 
+	public synchronized List<Property> propertiesWithOverdueNotices() {
+		LOGGER.entering(CLASS_NAME, "propertiesWithOverdueNotices");
+		List<Property> copyList = properties().stream().filter(property -> property.areNoticesOverdue())
+				.collect(Collectors.toList());
+		Collections.sort(copyList);
+		LOGGER.exiting(CLASS_NAME, "propertiesWithOverdueNotices", copyList);
+		return copyList;
+	}
+
+	public synchronized List<Property> propertiesWithOverdueItems() {
+		LOGGER.entering(CLASS_NAME, "propertiesWithOverdueItems");
+		List<Property> copyList = properties().stream().filter(property -> property.areItemsOverdue())
+				.collect(Collectors.toList());
+		Collections.sort(copyList);
+		LOGGER.exiting(CLASS_NAME, "propertiesWithOverdueItems", copyList);
+		return copyList;
+	}
+
 	public synchronized List<MonitoredItem> monitoredItemsFor(Property property) {
 		LOGGER.entering(CLASS_NAME, "monitoredItemsFor", property);
 		Property p = findProperty(property);
