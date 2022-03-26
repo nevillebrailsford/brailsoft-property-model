@@ -1,6 +1,7 @@
 package com.brailsoft.model;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -405,6 +406,36 @@ public class PropertyMonitor {
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "monitoredItemsFor", copyList);
 		return copyList;
+	}
+
+	public synchronized List<MonitoredItem> overdueItemsFor(LocalDate date) {
+		LOGGER.entering(CLASS_NAME, "overdueItemsFor", date);
+		if (date == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: date was null");
+			LOGGER.throwing(CLASS_NAME, "overdueItemsFor", exc);
+			LOGGER.exiting(CLASS_NAME, "overdueItemsFor");
+			throw exc;
+		}
+		List<MonitoredItem> overdueList = getAllItems().stream().filter(item -> item.timeForNextAction().equals(date))
+				.collect(Collectors.toList());
+		Collections.sort(overdueList);
+		LOGGER.exiting(CLASS_NAME, "overdueItemsFor", overdueList);
+		return overdueList;
+	}
+
+	public synchronized List<MonitoredItem> notifiedItemsFor(LocalDate date) {
+		LOGGER.entering(CLASS_NAME, "notifiedItemsFor", date);
+		if (date == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: date was null");
+			LOGGER.throwing(CLASS_NAME, "notifiedItemsFor", exc);
+			LOGGER.exiting(CLASS_NAME, "notifiedItemsFor");
+			throw exc;
+		}
+		List<MonitoredItem> notifiedList = getAllItems().stream().filter(item -> item.timeForNextNotice().equals(date))
+				.collect(Collectors.toList());
+		Collections.sort(notifiedList);
+		LOGGER.exiting(CLASS_NAME, "notifiedItemsFor", notifiedList);
+		return notifiedList;
 	}
 
 	public synchronized List<InventoryItem> inventoryItemsFor(Property property) {
