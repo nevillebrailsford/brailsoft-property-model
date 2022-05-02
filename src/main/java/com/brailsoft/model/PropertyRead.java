@@ -58,7 +58,7 @@ public class PropertyRead extends AbstractLoadData {
 
 	private void process(Document document) {
 		LOGGER.entering(CLASS_NAME, "process");
-		NodeList list = document.getElementsByTagName(Constants.PROPERTY);
+		NodeList list = document.getElementsByTagName(XMLConstants.PROPERTY);
 		for (int index = 0; index < list.getLength(); index++) {
 			Node node = list.item(index);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -73,7 +73,7 @@ public class PropertyRead extends AbstractLoadData {
 	}
 
 	private void updatePropertyWithMonitoredItems(Property property, Element propertyElement) {
-		NodeList list = propertyElement.getElementsByTagName(Constants.ITEM);
+		NodeList list = propertyElement.getElementsByTagName(XMLConstants.ITEM);
 		if (list == null || list.getLength() == 0) {
 			return;
 		}
@@ -89,7 +89,7 @@ public class PropertyRead extends AbstractLoadData {
 	}
 
 	private void updatePropertyWithInventoryItems(Property property, Element propertyElement) {
-		NodeList list = propertyElement.getElementsByTagName(Constants.INVENTORY);
+		NodeList list = propertyElement.getElementsByTagName(XMLConstants.INVENTORY);
 		if (list == null || list.getLength() == 0) {
 			return;
 		}

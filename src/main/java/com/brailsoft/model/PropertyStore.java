@@ -60,7 +60,7 @@ public class PropertyStore extends AbstractStoreData {
 	}
 
 	private void writeDataTo(Document document) {
-		Element rootElement = document.createElement(Constants.PROPERTIES);
+		Element rootElement = document.createElement(XMLConstants.PROPERTIES);
 		document.appendChild(rootElement);
 		PropertyMonitor.instance().properties().stream().forEach(property -> {
 			Element propertyElement = buildElementFor(property, document);

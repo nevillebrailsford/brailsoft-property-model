@@ -40,7 +40,7 @@ public class PostCode implements Comparable<PostCode> {
 		if (document == null) {
 			throw new IllegalArgumentException("PostCode: document was null");
 		}
-		Element result = document.createElement(Constants.POSTCODE);
+		Element result = document.createElement(XMLConstants.POSTCODE);
 		result.setTextContent(value.get());
 		return result;
 	}

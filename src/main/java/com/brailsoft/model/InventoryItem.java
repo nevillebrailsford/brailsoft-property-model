@@ -72,12 +72,12 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		if (itemElement == null) {
 			throw new IllegalArgumentException("InventoryItem: itemElement was null");
 		}
-		String description = itemElement.getElementsByTagName(Constants.DESCRIPTION).item(0).getTextContent();
-		String manufacturer = textContent(itemElement, Constants.MANUFACTURER);
-		String model = textContent(itemElement, Constants.MODEL);
-		String serialNumber = textContent(itemElement, Constants.SERIAL_NUMBER);
-		String supplier = textContent(itemElement, Constants.SUPPLIER);
-		String purchaseDate = textContent(itemElement, Constants.PURCHASE_DATE);
+		String description = itemElement.getElementsByTagName(XMLConstants.DESCRIPTION).item(0).getTextContent();
+		String manufacturer = textContent(itemElement, XMLConstants.MANUFACTURER);
+		String model = textContent(itemElement, XMLConstants.MODEL);
+		String serialNumber = textContent(itemElement, XMLConstants.SERIAL_NUMBER);
+		String supplier = textContent(itemElement, XMLConstants.SUPPLIER);
+		String purchaseDate = textContent(itemElement, XMLConstants.PURCHASE_DATE);
 		if (!purchaseDate.isEmpty()) {
 			LocalDate lDate = LocalDate.parse(purchaseDate, storageFormatter);
 			purchaseDate = lDate.format(dateFormatter);
@@ -99,24 +99,24 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		if (document == null) {
 			throw new IllegalArgumentException("InventoryItem: document was null");
 		}
-		Element result = document.createElement(Constants.INVENTORY);
-		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, description(), document));
+		Element result = document.createElement(XMLConstants.INVENTORY);
+		result.appendChild(ElementBuilder.build(XMLConstants.DESCRIPTION, description(), document));
 		if (!manufacturer().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.MANUFACTURER, manufacturer(), document));
+			result.appendChild(ElementBuilder.build(XMLConstants.MANUFACTURER, manufacturer(), document));
 		}
 		if (!model().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.MODEL, model(), document));
+			result.appendChild(ElementBuilder.build(XMLConstants.MODEL, model(), document));
 		}
 		if (!serialNumber().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.SERIAL_NUMBER, serialNumber(), document));
+			result.appendChild(ElementBuilder.build(XMLConstants.SERIAL_NUMBER, serialNumber(), document));
 		}
 		if (!supplier().isEmpty()) {
-			result.appendChild(ElementBuilder.build(Constants.SUPPLIER, supplier(), document));
+			result.appendChild(ElementBuilder.build(XMLConstants.SUPPLIER, supplier(), document));
 		}
 		if (!purchaseDate().isEmpty()) {
 			LocalDate lDate = LocalDate.parse(purchaseDate(), dateFormatter);
 			String dateForStorage = lDate.format(storageFormatter);
-			result.appendChild(ElementBuilder.build(Constants.PURCHASE_DATE, dateForStorage, document));
+			result.appendChild(ElementBuilder.build(XMLConstants.PURCHASE_DATE, dateForStorage, document));
 		}
 		return result;
 	}

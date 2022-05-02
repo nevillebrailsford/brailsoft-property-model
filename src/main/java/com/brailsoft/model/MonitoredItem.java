@@ -151,17 +151,17 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		if (itemElement == null) {
 			throw new IllegalArgumentException("MonitoredItem: itemElement was null");
 		}
-		String description = itemElement.getElementsByTagName(Constants.DESCRIPTION).item(0).getTextContent();
-		String speriodForNextAction = itemElement.getElementsByTagName(Constants.PERIOD_FOR_NEXT_ACTION).item(0)
+		String description = itemElement.getElementsByTagName(XMLConstants.DESCRIPTION).item(0).getTextContent();
+		String speriodForNextAction = itemElement.getElementsByTagName(XMLConstants.PERIOD_FOR_NEXT_ACTION).item(0)
 				.getTextContent();
-		String snoticeEvery = itemElement.getElementsByTagName(Constants.NOTICE_EVERY).item(0).getTextContent();
-		String slastActioned = itemElement.getElementsByTagName(Constants.LAST_ACTIONED).item(0).getTextContent();
-		String sadvanceNotice = itemElement.getElementsByTagName(Constants.ADVANCE_NOTICE).item(0).getTextContent();
-		String speriodForNextNotice = itemElement.getElementsByTagName(Constants.PERIOD_FOR_NEXT_NOTICE).item(0)
+		String snoticeEvery = itemElement.getElementsByTagName(XMLConstants.NOTICE_EVERY).item(0).getTextContent();
+		String slastActioned = itemElement.getElementsByTagName(XMLConstants.LAST_ACTIONED).item(0).getTextContent();
+		String sadvanceNotice = itemElement.getElementsByTagName(XMLConstants.ADVANCE_NOTICE).item(0).getTextContent();
+		String speriodForNextNotice = itemElement.getElementsByTagName(XMLConstants.PERIOD_FOR_NEXT_NOTICE).item(0)
 				.getTextContent();
 		String sEmailSentOn = null;
-		if (itemElement.getElementsByTagName(Constants.EMAIL_SENT_ON).getLength() > 0) {
-			sEmailSentOn = itemElement.getElementsByTagName(Constants.EMAIL_SENT_ON).item(0).getTextContent();
+		if (itemElement.getElementsByTagName(XMLConstants.EMAIL_SENT_ON).getLength() > 0) {
+			sEmailSentOn = itemElement.getElementsByTagName(XMLConstants.EMAIL_SENT_ON).item(0).getTextContent();
 		}
 
 		LocalDate lastActioned = LocalDate.parse(slastActioned);
@@ -182,18 +182,18 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		if (document == null) {
 			throw new IllegalArgumentException("MonitoredItem: document was null");
 		}
-		Element result = document.createElement(Constants.ITEM);
-		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, description(), document));
+		Element result = document.createElement(XMLConstants.ITEM);
+		result.appendChild(ElementBuilder.build(XMLConstants.DESCRIPTION, description(), document));
 		result.appendChild(
-				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_ACTION, periodForNextAction().toString(), document));
-		result.appendChild(ElementBuilder.build(Constants.NOTICE_EVERY, Integer.toString(noticeEvery()), document));
+				ElementBuilder.build(XMLConstants.PERIOD_FOR_NEXT_ACTION, periodForNextAction().toString(), document));
+		result.appendChild(ElementBuilder.build(XMLConstants.NOTICE_EVERY, Integer.toString(noticeEvery()), document));
 		result.appendChild(
-				ElementBuilder.build(Constants.LAST_ACTIONED, getLastActionPerformed().toString(), document));
-		result.appendChild(ElementBuilder.build(Constants.ADVANCE_NOTICE, Integer.toString(advanceNotice()), document));
+				ElementBuilder.build(XMLConstants.LAST_ACTIONED, getLastActionPerformed().toString(), document));
+		result.appendChild(ElementBuilder.build(XMLConstants.ADVANCE_NOTICE, Integer.toString(advanceNotice()), document));
 		result.appendChild(
-				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_NOTICE, periodForNextNotice().toString(), document));
+				ElementBuilder.build(XMLConstants.PERIOD_FOR_NEXT_NOTICE, periodForNextNotice().toString(), document));
 		if (emailSentOn() != null) {
-			result.appendChild(ElementBuilder.build(Constants.EMAIL_SENT_ON, emailSentOn().toString(), document));
+			result.appendChild(ElementBuilder.build(XMLConstants.EMAIL_SENT_ON, emailSentOn().toString(), document));
 		}
 		return result;
 

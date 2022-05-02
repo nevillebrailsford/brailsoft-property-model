@@ -1,6 +1,6 @@
 package com.brailsoft.model;
 
-public class Constants {
+public class XMLConstants {
 
 	public static final String PROPERTIES = "properties";
 

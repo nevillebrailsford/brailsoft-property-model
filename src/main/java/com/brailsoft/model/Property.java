@@ -46,14 +46,14 @@ public class Property implements Comparable<Property> {
 		if (propertyElement == null) {
 			throw new IllegalArgumentException("Property: propertyElement was null");
 		}
-		this.address.set(new Address((Element) propertyElement.getElementsByTagName(Constants.ADDRESS).item(0)));
+		this.address.set(new Address((Element) propertyElement.getElementsByTagName(XMLConstants.ADDRESS).item(0)));
 	}
 
 	public Element buildElement(Document document) {
 		if (document == null) {
 			throw new IllegalArgumentException("Property: document was null");
 		}
-		Element result = document.createElement(Constants.PROPERTY);
+		Element result = document.createElement(XMLConstants.PROPERTY);
 		result.appendChild(address().buildElement(document));
 		return result;
 	}

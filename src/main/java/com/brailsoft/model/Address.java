@@ -77,12 +77,12 @@ public class Address implements Comparable<Address> {
 		if (addressElement == null) {
 			throw new IllegalArgumentException("Address: addressElement was null");
 		}
-		NodeList list = addressElement.getElementsByTagName(Constants.LINE);
+		NodeList list = addressElement.getElementsByTagName(XMLConstants.LINE);
 		String[] linesOfAddress = new String[list.getLength()];
 		for (int index = 0; index < list.getLength(); index++) {
 			linesOfAddress[index] = list.item(index).getTextContent();
 		}
-		this.postcode.set(new PostCode((Element) addressElement.getElementsByTagName(Constants.POSTCODE).item(0)));
+		this.postcode.set(new PostCode((Element) addressElement.getElementsByTagName(XMLConstants.POSTCODE).item(0)));
 		this.street.set(linesOfAddress[0]);
 		this.town.set(linesOfAddress[1]);
 		this.county.set(linesOfAddress[2]);
@@ -93,10 +93,10 @@ public class Address implements Comparable<Address> {
 		if (document == null) {
 			throw new IllegalArgumentException("Address: document was null");
 		}
-		Element result = document.createElement(Constants.ADDRESS);
+		Element result = document.createElement(XMLConstants.ADDRESS);
 		result.appendChild(postCode().buildElement(document));
 		for (int index = 0; index < linesOfAddress().length; index++) {
-			result.appendChild(ElementBuilder.build(Constants.LINE, linesOfAddress()[index], document));
+			result.appendChild(ElementBuilder.build(XMLConstants.LINE, linesOfAddress()[index], document));
 		}
 		return result;
 

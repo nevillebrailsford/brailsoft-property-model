@@ -1,8 +1,6 @@
 package com.brailsoft.model;
 
-import com.brailsoft.storage.StorageConstants;
-
-public interface ModelConstants extends StorageConstants {
+public interface ModelConstants {
 	public static final String dateFormatForUI = "dd/MM/uuuu";
 	public static final String dateFormatForStorage = "uuuu-MM-dd";
 
